@@ -14,7 +14,7 @@ const Landing = () => {
 
         <div className="relative z-10">
           <h1 className="text-5xl font-extrabold tracking-wide">
-            SamoTech
+          Samo<span className="text-cyan-400">Tech</span>
           </h1>
 
           <p className="mt-6 text-lg leading-8 text-gray-900 max-w-xl">
