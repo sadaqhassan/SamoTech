@@ -1,15 +1,16 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import { useAuth } from './Context/AuthContext'
-import Landing from './Pages/Landing';
 import Dashboard from './Pages/User/Dashboard';
 import Nav from './Components/Nav';
 import { Toaster } from 'react-hot-toast';
+import Princing from './Pages/FinanceBackage/Pricing';
 
 export const App = () => {
   const {user} = useAuth();
   return (
     <div>
+      <Princing/>
       {<Toaster/>}
       {
         user == null && <Nav/>  
