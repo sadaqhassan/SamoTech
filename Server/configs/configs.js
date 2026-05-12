@@ -1,6 +1,7 @@
 import express from 'express'
 import cookieParser from 'cookie-parser'
 import dotenv from 'dotenv'
+import cors from 'cors'
 
 export const configApp = (app)=>{
     dotenv.config();
