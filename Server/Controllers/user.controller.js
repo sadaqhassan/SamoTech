@@ -3,7 +3,6 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 //register user
-
 export const registerUser = async (req, res) => {
     const {name,email,password} = req.body;
     try {
@@ -13,7 +12,7 @@ export const registerUser = async (req, res) => {
         }   
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const role;
+        let role;
 
         if(email === process.env.ADMIN_EMAIL){
             role = "admin";
@@ -21,9 +20,9 @@ export const registerUser = async (req, res) => {
 
         const newUser = new userModel({name,email,password:hashedPassword, role});
         await newUser.save();
-        res.status(201).json({message:"User registered successfully"}); 
+        res.status(201).json({success:true, message:"User registered successfully"}); 
     } catch (error) {
-        res.status(500).json({message:error.message});
+        res.status(500).json({success:false, message:error.message});
         console.log(error);
     }
 }
@@ -38,16 +37,17 @@ export const loginUser = async (req, res) => {
         if(!user){
             return res.status(400).json({message:"invalid credentials"});
         }
-        const isMatch = await user.comparePassword(password);
+        const isMatch =  bcrypt.compareSync(password,user.password);
         if(!isMatch){
-            return res.status(400).json({message:"invalid credentials"});
+            return res.status(400).json({success:false, message:"invalid credentials"});
         }
         //generate token
         const token = jwt.sign({id:user._id}, process.env.JWT_SECRET, {expiresIn:"1d"});
         res.cookie("token", token, {httpOnly:true});
-        res.status(200).json({message:"User logged in successfully", token});
+        const {password:pwd, ...userData} = user._doc;
+        res.status(200).json({success:true, message:"User logged in successfully",userData:userData});
     } catch (error) {
-        res.status(500).json({message:error.message});
+        res.status(500).json({success:false, message:error.message});
         console.log(error);
     }   
 }
@@ -57,11 +57,11 @@ export const getUserProfile = async (req, res) => {
     try {
         const user = await userModel.findById(req.userId).select("-password");
         if(!user){
-            return res.status(404).json({message:"User not found"});
+            return res.status(404).json({success:false, message:"User not found"});
         }
-        res.status(200).json({message:"User profile retrieved successfully", userData:user});
+        res.status(200).json({success:true, message:"User profile retrieved successfully", userData:user});
     } catch (error) {
-        res.status(500).json({message:error.message});
+        res.status(500).json({success:false, message:error.message});
         console.log(error);
     }
 }
