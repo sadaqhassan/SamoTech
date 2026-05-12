@@ -4,7 +4,6 @@ import Auth from "./Auth";
 const Landing = () => {
   return (
     <div className="min-h-screen flex">
-      
       {/* Left Side */}
       <div className="w-1/2 bg-from-cyan-800 text-black flex flex-col justify-center px-16 relative overflow-hidden">
         
