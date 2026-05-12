@@ -1,7 +1,10 @@
 import React, { useState } from "react";
+import toast from "react-hot-toast";
+import { useAuth } from "../Context/AuthContext";
 
 const Auth = () => {
   const [state, setState] = useState("login");
+  const {user,setUser}= useAuth();
   const [inputData, setInputData] = useState({
     name: "",
     email: "",
@@ -15,9 +18,47 @@ const Auth = () => {
     }));
   };
 
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if(state === "login") {
+      const res = await fetch(`http://localhost:4000/api/user/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(inputData),
+      });
+      const data = await res.json();
+      if(data.success){
+        toast.success(data.message);
+        setUser(data.userData);
+      }else{
+        return toast.error(data.message);
+      }
+      console.log(data);
+    } else {
+      const res = await fetch(`http://localhost:4000/api/user/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(inputData),
+      });
+      const data = await res.json();
+      if(data.success){
+        toast.success(data.message);
+        
+      }else{
+        return toast.error(data.message);
+      }
+      console.log(data);
+    }
+  };
+
   return (
     <div className="w-full">
-      <form className="flex flex-col space-y-5">
+      <form onSubmit={handleSubmit} className="flex flex-col space-y-5">
         
         {/* Title */}
         <div>
